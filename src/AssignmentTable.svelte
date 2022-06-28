@@ -21,7 +21,6 @@
 	assignments.push(toys1);
 	assignments.push(toys2);
 
-	// TODO: Weight this based on isSummative
 	function getPossibleGrade(assignment) {
 		if (assignment.current != undefined) {
 			/* if a grade has been given */
@@ -40,7 +39,6 @@
 		}
 	}
 
-	// TODO: Weight this based on isSummative
 	function getActualGrade(assignment) {
 		if (assignment.current != undefined) {
 			/* if a grade has been given */
@@ -51,23 +49,40 @@
 		}
 	}
 
+	function weight(assignment, getFn) {
+		let grade = getFn(assignment);
+		if (grade == undefined) return [assignment.isSummative, undefined];
+		let weighted = assignment.isSummative ? grade * 0.8 : grade * 0.2;
+		return [assignment.isSummative, weighted];
+	}
+
 	function calculate(fn) {
-		let grades = assignments.map(fn);
-		let gradesTotal = grades.reduce((total, current) => {
-			if (current == undefined) {
-				return total
-			} else {
-				return total + current
-			}
+		let grades = assignments.map(assignment => { return weight(assignment, fn) });
+		let summativeTotal = grades.reduce((total, current) => {
+			if (!current[0] /* !isSummative */) return total;
+			if (current[1] == undefined) return total;
+			return total + current[1];
 		} , 0);
-		let gradesCount = grades.reduce((total, current) => {
-			if (current == undefined) {
-				return total
-			} else {
-				return total + 1;
-			}
+		let summativeCount = grades.reduce((total, current) => {
+			if (!current[0] /* !isSummative */) return total;
+			if (current[1] == undefined) return total;
+			return total + 1;
 		} , 0);
-		return gradesTotal / gradesCount;
+		let summativeAverage = summativeTotal / summativeCount;
+		let formativeTotal = grades.reduce((total, current) => {
+			if (current[0] /* isSummative */) return total;
+			if (current[1] == undefined) return total;
+			return total + current[1];
+		} , 0);
+		let formativeCount = grades.reduce((total, current) => {
+			if (current[0] /* isSummative */) return total;
+			if (current[1] == undefined) return total;
+			return total + 1;
+		} , 0);
+		let formativeAverage = formativeTotal / formativeCount;
+		if (summativeCount == 0) return 100 * (formativeAverage / 20);
+		if (formativeCount == 0) return 100 * (summativeAverage / 80);
+		return summativeAverage + formativeAverage;
 	}
 
 // FIXME: Having to bootstrap this to fill in missing possibles
