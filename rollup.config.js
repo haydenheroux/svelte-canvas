@@ -54,6 +54,9 @@ export default {
 			targets: [{
 				src: 'node_modules/bootstrap/dist/**/*',
 				dest: 'public/vendor/bootstrap'
+			}, {
+				src: 'node_modules/jquery/dist/**/*',
+				dest: 'public/vendor/jquery'
 			}]
 		}),
 
