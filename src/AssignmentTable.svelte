@@ -56,30 +56,30 @@
 		return [assignment.isSummative, weighted];
 	}
 
-	function calculate(fn) {
-		let grades = assignments.map(assignment => { return weight(assignment, fn) });
+	function calculate(getFn) {
+		let grades = assignments.map(assignment => { return weight(assignment, getFn) });
+
 		let summativeTotal = grades.reduce((total, current) => {
 			if (!current[0] /* !isSummative */) return total;
 			if (current[1] == undefined) return total;
 			return total + current[1];
 		} , 0);
-		let summativeCount = grades.reduce((total, current) => {
-			if (!current[0] /* !isSummative */) return total;
-			if (current[1] == undefined) return total;
-			return total + 1;
-		} , 0);
-		let summativeAverage = summativeTotal / summativeCount;
 		let formativeTotal = grades.reduce((total, current) => {
 			if (current[0] /* isSummative */) return total;
 			if (current[1] == undefined) return total;
 			return total + current[1];
 		} , 0);
-		let formativeCount = grades.reduce((total, current) => {
-			if (current[0] /* isSummative */) return total;
-			if (current[1] == undefined) return total;
-			return total + 1;
-		} , 0);
+
+		let summativeCount = assignments.filter(assignment => {
+			return assignment.isSummative && getFn(assignment) != undefined
+		}).length;
+		let formativeCount = assignments.filter(assignment => {
+			return !assignment.isSummative && getFn(assignment) != undefined
+		}).length;
+
+		let summativeAverage = summativeTotal / summativeCount;
 		let formativeAverage = formativeTotal / formativeCount;
+
 		if (summativeCount == 0) return 100 * (formativeAverage / 20);
 		if (formativeCount == 0) return 100 * (summativeAverage / 80);
 		return summativeAverage + formativeAverage;
