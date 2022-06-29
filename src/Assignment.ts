@@ -30,42 +30,48 @@ function getCurrentGrade(assignment: IAssignment): number {
 	}
 }
 
-function weight(assignment: IAssignment, getter: (a: IAssignment) => number): [boolean, NullableNumber] {
+function weight(assignment: IAssignment, getter: (a: IAssignment) => number): NullableNumber {
 	let grade = getter(assignment)
-	if (grade == null) return [assignment.isSummative, null]
+	if (grade == null) return null
 	let weighted = assignment.isSummative ? grade * 0.8 : grade * 0.2
-	return [assignment.isSummative, weighted]
+	return weighted
 }
 
 function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => number): number {
-	let grades = assignments.map(assignment => { return weight(assignment, getter) })
+	const usableAssignments = assignments.filter(assignment => {
+		return getter(assignment) != null
+	})
 
-	let summativeTotal = grades.reduce((total, current) => {
-		if (!current[0] /* !isSummative */) return total
-		if (current[1] == null) return total
-		return total + current[1]
-	} , 0)
-	let formativeTotal = grades.reduce((total, current) => {
-		if (current[0] /* isSummative */) return total
-		if (current[1] == null) return total
-		return total + current[1]
-	} , 0)
+	const summatives = usableAssignments.filter(assignment => {
+		return assignment.isSummative
+	})
+	const formatives = usableAssignments.filter(assignment => {
+		return !assignment.isSummative
+	})
 
-	let summativeCount = assignments.filter(assignment => {
-		return assignment.isSummative && getter(assignment) != null
-	}).length
-	let formativeCount = assignments.filter(assignment => {
-		return !assignment.isSummative && getter(assignment) != null
-	}).length
+	const summativeTotal = summatives.map(assignment => {
+		return weight(assignment, getter)
+	}).reduce((total, score) => {
+		return total + score
+	}, 0)
 
-	let summativeAverage = summativeTotal / summativeCount
-	let formativeAverage = formativeTotal / formativeCount
+	const formativeTotal = formatives.map(assignment => {
+		return weight(assignment, getter)
+	}).reduce((total, score) => {
+		return total + score
+	}, 0)
 
-	if (summativeCount == 0 && formativeCount == 0) return NaN;
+	const summativeCount = summatives.length;
+	const formativeCount = formatives.length;
+
+	const summativeAverage = summativeTotal / summativeCount
+	const formativeAverage = formativeTotal / formativeCount
+
+	if (summativeCount == 0 && formativeCount == 0) return NaN
 	if (summativeCount == 0) return 100 * (formativeAverage / 20)
 	if (formativeCount == 0) return 100 * (summativeAverage / 80)
 	return summativeAverage + formativeAverage
 }
 
-export const calculatePossibleGrade = (assignments) => {return calculate(assignments, getPossibleGrade)};
-export const calculateCurrentGrade = (assignments) => {return calculate(assignments, getCurrentGrade)};
+export const calculatePossibleGrade = (assignments) => {return calculate(assignments, getPossibleGrade)}
+export const calculateCurrentGrade = (assignments) => {return calculate(assignments, getCurrentGrade)}
