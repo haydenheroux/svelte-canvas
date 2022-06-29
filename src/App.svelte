@@ -1,7 +1,9 @@
 <script>
-	import AssignmentTable from "./AssignmentTable.svelte";
+	import Nav from "./Nav.svelte"
+	import AssignmentTable from "./AssignmentTable.svelte"
 </script>
 
-<main>
+<Nav/>
+<main class="container pt-3">
 	<AssignmentTable/>
 </main>
