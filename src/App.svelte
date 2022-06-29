@@ -1,6 +1,6 @@
 <script>
-	import Nav from "./Nav.svelte"
-	import AssignmentTable from "./AssignmentTable.svelte"
+	import Nav from "./components/Nav.svelte"
+	import AssignmentTable from "./components/AssignmentTable.svelte"
 </script>
 
 <Nav/>

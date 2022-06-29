@@ -1,11 +1,5 @@
-type NullableNumber = number | null;
-
-interface IAssignment {
-	name: string,
-	isSummative: boolean,
-	possible: NullableNumber,
-	current: NullableNumber
-}
+import type { IAssignment } from "./interfaces/IAssignment"
+import type { NullableNumber } from "./types"
 
 function getPossibleGrade(assignment: IAssignment): number {
 	if (assignment.current != null) {
