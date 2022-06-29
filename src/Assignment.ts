@@ -1,7 +1,7 @@
 import type { IAssignment } from "./interfaces/IAssignment"
 import type { NullableNumber } from "./types"
 
-function getPossibleGrade(assignment: IAssignment): number {
+function getPossibleGrade(assignment: IAssignment): NullableNumber {
 	if (assignment.current != null) {
 		/* if a grade has been given */
 		return assignment.current
@@ -20,7 +20,7 @@ function getPossibleGrade(assignment: IAssignment): number {
 	}
 }
 
-function getCurrentGrade(assignment: IAssignment): number {
+function getCurrentGrade(assignment: IAssignment): NullableNumber {
 	if (assignment.current != null) {
 		/* if a grade has been given */
 		return assignment.current
@@ -30,14 +30,7 @@ function getCurrentGrade(assignment: IAssignment): number {
 	}
 }
 
-function weight(assignment: IAssignment, getter: (a: IAssignment) => number): NullableNumber {
-	let grade = getter(assignment)
-	if (grade == null) return null
-	let weighted = assignment.isSummative ? grade * 0.8 : grade * 0.2
-	return weighted
-}
-
-function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => number): number {
+function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => NullableNumber): NullableNumber {
 	const usableAssignments = assignments.filter(assignment => {
 		return getter(assignment) != null
 	})
@@ -49,28 +42,37 @@ function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => 
 		return !assignment.isSummative
 	})
 
-	const summativeTotal = summatives.map(assignment => {
-		return weight(assignment, getter)
+	const summativePointsScored = summatives.map(assignment => {
+		return getter(assignment)
 	}).reduce((total, score) => {
 		return total + score
 	}, 0)
 
-	const formativeTotal = formatives.map(assignment => {
-		return weight(assignment, getter)
+	const formativePointsScored = formatives.map(assignment => {
+		return getter(assignment)
 	}).reduce((total, score) => {
 		return total + score
 	}, 0)
 
-	const summativeCount = summatives.length;
-	const formativeCount = formatives.length;
+	const summativePointsMaximum = summatives.map(assignment => {
+		return assignment.max
+	}).reduce((total, score) => {
+		return total + score
+	}, 0)
 
-	const summativeAverage = summativeTotal / summativeCount
-	const formativeAverage = formativeTotal / formativeCount
+	const formativePointsMaximum = formatives.map(assignment => {
+		return assignment.max
+	}).reduce((total, score) => {
+		return total + score
+	}, 0)
 
-	if (summativeCount == 0 && formativeCount == 0) return NaN
-	if (summativeCount == 0) return 100 * (formativeAverage / 20)
-	if (formativeCount == 0) return 100 * (summativeAverage / 80)
-	return summativeAverage + formativeAverage
+	const summativeGrade = 100 * (summativePointsScored / summativePointsMaximum)
+	const formativeGrade = 100 * (formativePointsScored / formativePointsMaximum)
+
+	if (summativePointsMaximum == 0 && formativePointsMaximum == 0) return null
+	if (summativePointsMaximum == 0) return formativeGrade
+	if (formativePointsMaximum == 0) return summativeGrade
+	return 0.8 * summativeGrade + 0.2 * formativeGrade
 }
 
 export const calculatePossibleGrade = (assignments: Array<IAssignment>) => {return calculate(assignments, getPossibleGrade)}
