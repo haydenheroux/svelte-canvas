@@ -25,14 +25,15 @@
 				<td>{assignment.name}</td> 
 				{#if assignment.current != null}
 					<td></td>
+					<td><b>{assignment.current}</b> / {assignment.max}</td>
 				{:else}
 					{#if editing == index}
-						<td><input min=0 type="number" on:blur={() => {editing = null}} bind:value={assignment.possible}/></td>
+						<td><input min=0 type="number" on:blur={() => {editing = null}} bind:value={assignment.possible}/> / {assignment.max}</td>
 					{:else}
-						<td on:click={() => {editing = index}}>{assignment.possible}</td>
+						<td on:click={() => {editing = index}}>{assignment.possible} / {assignment.max}</td>
 					{/if}
+					<td></td>
 				{/if}
-				<td><b>{assignment.current != null ? assignment.current : "" }</b></td>
 			</tr>
 		{/each}
 		<tr>
