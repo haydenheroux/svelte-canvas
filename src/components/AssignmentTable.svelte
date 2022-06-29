@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { assignments } from "../store.ts"
-	import { calculatePossibleGrade, calculateCurrentGrade } from "../Assignment.ts"
+	import { assignments } from "../store"
+	import { calculatePossibleGrade, calculateCurrentGrade } from "../Assignment"
 
 	let editing = null;
 </script>

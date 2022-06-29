@@ -73,5 +73,5 @@ function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => 
 	return summativeAverage + formativeAverage
 }
 
-export const calculatePossibleGrade = (assignments) => {return calculate(assignments, getPossibleGrade)}
-export const calculateCurrentGrade = (assignments) => {return calculate(assignments, getCurrentGrade)}
+export const calculatePossibleGrade = (assignments: Array<IAssignment>) => {return calculate(assignments, getPossibleGrade)}
+export const calculateCurrentGrade = (assignments: Array<IAssignment>) => {return calculate(assignments, getCurrentGrade)}
