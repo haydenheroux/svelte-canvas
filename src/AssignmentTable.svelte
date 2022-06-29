@@ -96,6 +96,12 @@
 	calculate(assignments, getActualGrade)
 </script>
 
+<style>
+	th {
+		width: 33%;
+	}
+</style>
+
 <table class="table table-striped">
 	<thead>
 		<tr>
