@@ -32,42 +32,40 @@ function getCurrentGrade(assignment: IAssignment): NullableNumber {
 
 function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => NullableNumber): NullableNumber {
 	const usableAssignments = assignments.filter(assignment => {
+		/* note that this removes all future possibilities for NullableNumbers */
 		return getter(assignment) != null
 	})
 
-	const summatives = usableAssignments.filter(assignment => {
+	const summatives: Array<IAssignment> = usableAssignments.filter(assignment => {
 		return assignment.isSummative
 	})
-	const formatives = usableAssignments.filter(assignment => {
+	const formatives: Array<IAssignment> = usableAssignments.filter(assignment => {
 		return !assignment.isSummative
 	})
 
-	const summativePointsScored = summatives.map(assignment => {
-		return getter(assignment)
-	}).reduce((total, score) => {
-		return total + score
-	}, 0)
+	function total(a: number, b: number): number {
+		return a + b
+	}
 
-	const formativePointsScored = formatives.map(assignment => {
-		return getter(assignment)
-	}).reduce((total, score) => {
-		return total + score
-	}, 0)
+	function pointsScored(assignments: Array<IAssignment>): number {
+		return assignments.map(assignment => {
+			return getter(assignment)
+		}).reduce(total, 0)
+	}
 
-	const summativePointsMaximum = summatives.map(assignment => {
-		return assignment.max
-	}).reduce((total, score) => {
-		return total + score
-	}, 0)
+	function pointsMaximum(assignments: Array<IAssignment>): number {
+		return assignments.map(assignment => {
+			return assignment.max
+		}).reduce(total, 0)
+	}
 
-	const formativePointsMaximum = formatives.map(assignment => {
-		return assignment.max
-	}).reduce((total, score) => {
-		return total + score
-	}, 0)
+	const summativePointsScored: number = pointsScored(summatives)
+	const summativePointsMaximum: number = pointsMaximum(summatives)
+	const summativeGrade: number = 100 * (summativePointsScored / summativePointsMaximum)
 
-	const summativeGrade = 100 * (summativePointsScored / summativePointsMaximum)
-	const formativeGrade = 100 * (formativePointsScored / formativePointsMaximum)
+	const formativePointsScored: number = pointsScored(formatives)
+	const formativePointsMaximum: number = pointsMaximum(formatives)
+	const formativeGrade: number = 100 * (formativePointsScored / formativePointsMaximum)
 
 	if (summativePointsMaximum == 0 && formativePointsMaximum == 0) return null
 	if (summativePointsMaximum == 0) return formativeGrade
