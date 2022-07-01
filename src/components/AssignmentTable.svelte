@@ -5,13 +5,7 @@
 	let editing = null;
 </script>
 
-<style>
-	th {
-		width: 33%;
-	}
-</style>
-
-<table class="table table-striped">
+<table>
 	<thead>
 		<tr>
 			<th>Name</th>

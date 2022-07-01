@@ -50,15 +50,6 @@ export default {
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
 		css({ output: 'bundle.css' }),
-		copy({
-			targets: [{
-				src: 'node_modules/bootstrap/dist/**/*',
-				dest: 'public/vendor/bootstrap'
-			}, {
-				src: 'node_modules/jquery/dist/**/*',
-				dest: 'public/vendor/jquery'
-			}]
-		}),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
