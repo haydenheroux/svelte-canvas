@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { assignments } from "../store"
-	import { calculatePossibleGrade, calculateCurrentGrade } from "../Assignment"
+	import { calculatePossibleGrade, calculateGrade } from "../Assignment"
 
 	let editing = null;
 </script>
@@ -38,8 +38,8 @@
 		{/each}
 		<tr>
 			<td><b>Total</b></td>
-			<td>{calculatePossibleGrade($assignments)}</td>
-			<td><b>{calculateCurrentGrade($assignments)}</b></td>
+			<td>{calculatePossibleGrade($assignments).toFixed(2)}</td>
+			<td><b>{calculateGrade($assignments).toFixed(2)}</b></td>
 		</tr>
 	</tbody>
 </table>

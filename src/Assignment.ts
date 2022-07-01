@@ -31,9 +31,9 @@ function getGrade(assignment: IAssignment): NullableNumber {
 }
 
 function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => NullableNumber): NullableNumber {
-	const usableAssignments = assignments.filter(assignment => { getter(assignment) != null })
-	const summatives = usableAssignments.filter(assignment => {  assignment.isSummative })
-	const formatives = usableAssignments.filter(assignment => { !assignment.isSummative })
+	const usableAssignments = assignments.filter(assignment => { return getter(assignment) != null })
+	const summatives =  usableAssignments.filter(assignment => { return assignment.isSummative })
+	const formatives =  usableAssignments.filter(assignment => { return !assignment.isSummative })
 
 	function total(a: number, b: number): number {
 		return a + b
@@ -54,7 +54,7 @@ function calculate(assignments: Array<IAssignment>, getter: (a: IAssignment) => 
 	const summativeGrade = 100 * (points(summatives) / pointsMax(summatives))
 	const formativeGrade = 100 * (points(formatives) / pointsMax(formatives))
 
-	if (Number.isNaN(summativeGrade) && Number.isNaN(formativeGrade)) return null
+	if (Number.isNaN(summativeGrade) && Number.isNaN(formativeGrade)) return NaN
 	if (Number.isNaN(summativeGrade)) return formativeGrade
 	if (Number.isNaN(formativeGrade)) return summativeGrade
 	return 0.8 * summativeGrade + 0.2 * formativeGrade
